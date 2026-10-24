@@ -1,4 +1,5 @@
-## Portfolio Process Mining Pipeline![AI Assisted](https://shields.io)
+## Portfolio Process Mining Pipeline
+![AI Assisted](https://shields.io)
 
 An experimental modular Python framework that extracts historical financial asset data, constructs a synthetic blended index portfolio, discretizes continuous daily returns into symbolic behavioral event categories, and leverages Process Mining (Petri Nets) to discover and analyze behavioral transition workflows.
 
