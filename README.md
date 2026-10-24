@@ -5,37 +5,40 @@ An experimental modular Python framework that extracts historical financial asse
 
 ### Architecture
 
-    { Portfolio String ( AAPL:0.5 MSFT:0.4 ...) } ->
+{ Portfolio String ( AAPL:0.5 MSFT:0.4 ...) } ->
     
-    -> Parse Tickers -> { Allocation Strategy } ->
+-> Parse Tickers -> { Allocation Strategy } ->
     
-    -> API Extraction -> { yfinance Data Series } ->
+-> API Extraction -> { yfinance Data Series } ->
     
-    -> Map Activity -> { Petry net ( PNML ) } ->
+-> Map Activity -> { Petry net ( PNML ) } ->
     
-    -> Analysis -> { Report (JSON) }
+-> Analysis -> { Report (JSON) }
 
 ### Requirements & Installation
 
+```bash
 $ pip install yfinance pandas pm4py
-
+```
 
 ### Command-Line Interface Parameters
 
 The pipeline can be executed as a comprehensive end-to-end workflow engine or split dynamically into isolated stages using operational runtime flags.
 
-    -p PORTFOLIO, --portfolio PORTFOLIO Portfolio string, e.g. "AAPL:0.5, MSFT:0.5"
-    -h HORIZON, --horizon HORIZON   Historical horizon in years (default: 5)
-    -t NOISE_THRESHOLD, --noise-threshold NOISE_THRESHOLD   Inductive Miner noise threshold in [0, 1] (default: 0.15)
-    -d DEPENDENCY_THRESHOLD, --dependency_threshold DEPENDENCY_THRESHOLD    Heuristics Miner dependency threshold in [0, 1] (default: 0.4)
-    -f MAPPING_CONFIG, --mapping-config MAPPING_CONFIG  Path to custom activity mapping JSON
-    -c CSV_OUT, --csv-out CSV_OUT   Event-log CSV path (default: /tmp/portfolio.csv)
-    -n PNML_OUT, --pnml-out PNML_OUT    PNML path (default: /tmp/portfolio.pnml)
-    -j JSON_OUT, --json-out JSON_OUT    JSON report path (default: /tmp/portfolio.json)
-    -m {inductive,heuristic,split}, --method {inductive,heuristic,split}    Process discovery miner method.
-    --phase-csv           Run Phase 1 only: download data and write event CSV
-    --phase-pnml          Run Phase 2 only: read CSV and write PNML
-    --phase-json          Run Phase 3 only: read CSV/PNML and write JSON
+```bash
+-p PORTFOLIO, --portfolio PORTFOLIO Portfolio string, e.g. "AAPL:0.5, MSFT:0.5"
+-h HORIZON, --horizon HORIZON   Historical horizon in years (default: 5)
+-t NOISE_THRESHOLD, --noise-threshold NOISE_THRESHOLD   Inductive Miner noise threshold in [0, 1] (default: 0.15)
+-d DEPENDENCY_THRESHOLD, --dependency_threshold DEPENDENCY_THRESHOLD    Heuristics Miner dependency threshold in [0, 1] (default: 0.4)
+-f MAPPING_CONFIG, --mapping-config MAPPING_CONFIG  Path to custom activity mapping JSON
+-c CSV_OUT, --csv-out CSV_OUT   Event-log CSV path (default: /tmp/portfolio.csv)
+-n PNML_OUT, --pnml-out PNML_OUT    PNML path (default: /tmp/portfolio.pnml)
+-j JSON_OUT, --json-out JSON_OUT    JSON report path (default: /tmp/portfolio.json)
+-m {inductive,heuristic,split}, --method {inductive,heuristic,split}    Process discovery miner method.
+--phase-csv           Run Phase 1 only: download data and write event CSV
+--phase-pnml          Run Phase 2 only: read CSV and write PNML
+--phase-json          Run Phase 3 only: read CSV/PNML and write JSON
+```
     
 ### Data Transformation & Mapping Configurations
 
@@ -44,41 +47,45 @@ The pipeline can be executed as a comprehensive end-to-end workflow engine or sp
 
     If no configuration file path is passed to --mapping-config, the discretization engine maps individual daily return yields (R) across a standard five-tier tier architecture:
 
-        HIGH_GAIN: R > 1.5%
-        MODERATE_GAIN: 0.2% < R <= 1.5%
-        STABLE: -0.2% <= R <= 0.2%
-        MODERATE_LOSS: -1.5% <= R < -0.2%
-        HIGH_LOSS: R < -1.5%
+```bash
+HIGH_GAIN: R > 1.5%
+MODERATE_GAIN: 0.2% < R <= 1.5%
+STABLE: -0.2% <= R <= 0.2%
+MODERATE_LOSS: -1.5% <= R < -0.2%
+HIGH_LOSS: R < -1.5%
+```
 
 * Custom Rule Injection Format (custom_rules.json)
 
     You can supply highly granular tracking definitions via an external JSON template. The runtime structure supports evaluation conditions such as gt (>), gte (>=), lt (<), and lte (<=):
 
-    {
-    "mapping_name": "High Volatility Asset Boundaries",
-    "rules": [
-            {
-            "activity": "EXTREME_SHOCK_UP",
-            "conditions": { "gt": 0.04 }
-            },
-            {
-            "activity": "BULL_MARKET",
-            "conditions": { "gt": 0.005, "lte": 0.04 }
-            },
-            {
-            "activity": "CONSOLIDATION",
-            "conditions": { "gte": -0.005, "lte": 0.005 }
-            },
-            {
-            "activity": "BEAR_MARKET",
-            "conditions": { "lt": -0.005, "gte": -0.04 }
-            },
-            {
-            "activity": "EXTREME_SHOCK_DOWN",
-            "conditions": { "lt": -0.04 }
-            }
-        ]
-    }
+```bash
+{
+"mapping_name": "High Volatility Asset Boundaries",
+"rules": [
+        {
+        "activity": "EXTREME_SHOCK_UP",
+        "conditions": { "gt": 0.04 }
+        },
+        {
+        "activity": "BULL_MARKET",
+        "conditions": { "gt": 0.005, "lte": 0.04 }
+        },
+        {
+        "activity": "CONSOLIDATION",
+        "conditions": { "gte": -0.005, "lte": 0.005 }
+        },
+        {
+        "activity": "BEAR_MARKET",
+        "conditions": { "lt": -0.005, "gte": -0.04 }
+        },
+        {
+        "activity": "EXTREME_SHOCK_DOWN",
+        "conditions": { "lt": -0.04 }
+        }
+    ]
+}
+```
 
 ### Usage
 
