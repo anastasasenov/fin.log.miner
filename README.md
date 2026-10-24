@@ -5,16 +5,11 @@ An experimental modular Python framework that extracts historical financial asse
 
 ### Architecture
 
-
     { Portfolio String ( AAPL:0.5 MSFT:0.4 ...) } ->
-    
-    - Parse Tickers -> { Allocation Strategy } ->
-
-    - API Extraction -> { yfinance Data Series } ->
-
-    - Map Activity -> { Petry net ( PNML ) } -> 
-    
-    - Analysis -> { Report (JSON) }
+    -> Parse Tickers -> { Allocation Strategy } ->
+    -> API Extraction -> { yfinance Data Series } ->
+    -> Map Activity -> { Petry net ( PNML ) } -> 
+    -> Analysis -> { Report (JSON) }
 
 ### Requirements & Installation
 
